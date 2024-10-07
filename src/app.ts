@@ -6,7 +6,7 @@ import { HttpError } from "http-errors";
 const app = express();
 
 app.get("/", async (req, res) => {
-  res.send("Welcome to express with TypeScript");
+  res.send("Welcome to express with TypeScript with docker");
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

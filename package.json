@@ -4,7 +4,7 @@
   "description": "Auth service for pizza app",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon --legacy-watch src/server.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest --watch --runInBand",

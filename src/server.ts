@@ -5,7 +5,7 @@ import logger from "./config/logger";
 const startServer = async () => {
   try {
     app.listen(PORT, () =>
-      logger.info(`Test Server is running on port ${PORT}`)
+      logger.info(`Server from docker is running on port ${PORT}`)
     );
   } catch (error) {
     if (error instanceof Error) {
