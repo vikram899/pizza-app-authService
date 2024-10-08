@@ -16,7 +16,7 @@ describe("POST /auth/register", () => {
       const response = await request(app).post("/auth/register").send(userData);
 
       //Assert
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(200);
     });
     it("should return valid json response", async () => {
       //Arrange
