@@ -187,5 +187,118 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
       expect(users).toHaveLength(0);
     });
+    it("should return 400 for missing password", async () => {
+      //Arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: " johndoe@gmail.com ",
+        password: "",
+      };
+
+      //Act
+      const response = await request(app as unknown as App)
+        .post("/auth/register")
+        .send(userData);
+
+      expect(response.status).toBe(400);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
+    it("should return 400 for missing first Name", async () => {
+      //Arrange
+      const userData = {
+        firstName: "",
+        lastName: "Doe",
+        email: " johndoe@gmail.com ",
+        password: "password",
+      };
+
+      //Act
+      const response = await request(app as unknown as App)
+        .post("/auth/register")
+        .send(userData);
+
+      expect(response.status).toBe(400);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
+    it("should return 400 for missing last Name", async () => {
+      //Arrange
+      const userData = {
+        firstName: "John",
+        lastName: "",
+        email: " johndoe@gmail.com ",
+        password: "password",
+      };
+
+      //Act
+      const response = await request(app as unknown as App)
+        .post("/auth/register")
+        .send(userData);
+
+      expect(response.status).toBe(400);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
+  });
+
+  describe("Fields are not in proper format", () => {
+    it("should trim the email field", async () => {
+      //Arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: " johndoe@gmail.com ",
+        password: "password",
+      };
+
+      //Act
+      await request(app as unknown as App)
+        .post("/auth/register")
+        .send(userData);
+
+      //Assert
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users[0].email).toBe("johndoe@gmail.com");
+    });
+    it("should be a valid email", async () => {
+      //Arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@gmail",
+        password: "password",
+      };
+
+      //Act
+      const response = await request(app as unknown as App)
+        .post("/auth/register")
+        .send(userData);
+
+      //Assert
+      expect(response.status).toBe(400);
+    });
+    it("should have password length between 6 and 15", async () => {
+      //Arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@gmail",
+        password: "paword",
+      };
+
+      //Act
+      const response = await request(app as unknown as App)
+        .post("/auth/register")
+        .send(userData);
+
+      //Assert
+      expect(response.status).toBe(400);
+    });
   });
 });
