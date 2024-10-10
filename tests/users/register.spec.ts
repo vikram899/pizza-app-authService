@@ -142,6 +142,28 @@ describe("POST /auth/register", () => {
       expect(users[0].password).toHaveLength(60);
       expect(users[0].password).toMatch(/^\$2b\$\d+\$/);
     });
+    it("should return 400 for duplicate email", async () => {
+      //Arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "jhondoe@gmail.com",
+        password: "password",
+      };
+
+      const userRepository = connection.getRepository(User);
+      await userRepository.save({ ...userData, role: Roles.CUSTOMER });
+
+      //Act
+      const response = await request(app as unknown as App)
+        .post("/auth/register")
+        .send(userData);
+
+      //Assert
+      const users = await userRepository.find();
+      expect(response.status).toBe(400);
+      expect(users).toHaveLength(1);
+    });
   });
   describe("Fields are missing", () => {});
 });
