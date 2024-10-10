@@ -101,7 +101,6 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
       expect(response.body.id).toBe(users[0].id);
     });
-
     it("should assign a customer role", async () => {
       //Arrange
       const userData = {
@@ -121,6 +120,27 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
       expect(users[0]).toHaveProperty("role");
       expect(users[0].role).toBe(Roles.CUSTOMER);
+    });
+    it("should stored hased password in DB", async () => {
+      //Arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "jhondoe@gmail.com",
+        password: "password",
+      };
+
+      //Act
+      await request(app as unknown as App)
+        .post("/auth/register")
+        .send(userData);
+
+      //Assert
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users[0].password).not.toBe(userData.password);
+      expect(users[0].password).toHaveLength(60);
+      expect(users[0].password).toMatch(/^\$2b\$\d+\$/);
     });
   });
   describe("Fields are missing", () => {});

@@ -2,7 +2,8 @@ import { Repository } from "typeorm";
 import { User } from "../entity/User";
 import { UserData } from "../types";
 import createHttpError from "http-errors";
-import { Roles } from "../constants";
+import { Roles, SALT_ROUNDS } from "../constants";
+import bcrypt from "bcrypt";
 
 export class UserService {
   private userRepository: Repository<User>;
@@ -11,12 +12,14 @@ export class UserService {
   }
 
   async registerUser({ firstName, lastName, email, password }: UserData) {
+    //Hash the passwrord
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     try {
       return await this.userRepository.save({
         firstName,
         lastName,
         email,
-        password,
+        password: hashedPassword,
         role: Roles.CUSTOMER,
       });
     } catch (err) {
