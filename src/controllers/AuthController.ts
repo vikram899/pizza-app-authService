@@ -8,6 +8,7 @@ import { Logger } from "winston";
 import { validationResult } from "express-validator";
 import { JwtPayload, sign } from "jsonwebtoken";
 import createHttpError from "http-errors";
+import { SECRET } from "../config";
 
 export class AuthController {
   private userService: UserService;
@@ -66,7 +67,11 @@ export class AuthController {
         expiresIn: "1h",
         issuer: "auth-service",
       });
-      const refreshToken = "sasasa";
+      const refreshToken = sign(payload, SECRET as string, {
+        algorithm: "HS256",
+        expiresIn: "1y",
+        issuer: "auth-service",
+      });
 
       res.cookie("accessToken", accessToken, {
         domain: "localhost",

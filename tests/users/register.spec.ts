@@ -199,7 +199,7 @@ describe("POST /auth/register", () => {
       expect(accessToken).not.toEqual("");
       expect(refreshToken).not.toEqual("");
       expect(isJwt(accessToken)).toBeTruthy();
-      //expect(isJwt(refreshToken)).toBeTruthy();
+      expect(isJwt(refreshToken)).toBeTruthy();
     });
   });
 
