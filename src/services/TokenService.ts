@@ -43,7 +43,7 @@ export class TokenService {
   }
   async persistRefreshToken(userResult: User) {
     const MS_IN_YEARS = 1000 * 60 * 60 * 24 * 365;
-    //const refreshTokenRepository =   AppDataSource.getRepository(RefreshToken);
+
     const newRefToken = await this.refreshTokenRepository.save({
       user: userResult,
       expiresAt: new Date(Date.now() + MS_IN_YEARS),
