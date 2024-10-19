@@ -91,6 +91,7 @@ web_modules/
 out
 
 certs
+public
 # Nuxt.js build / generate output
 .nuxt
 dist
