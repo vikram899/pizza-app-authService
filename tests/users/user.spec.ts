@@ -96,5 +96,13 @@ describe("GET /auth/self", () => {
         "password"
       );
     });
+    it("should return 401 when no token is passed", async () => {
+      //Add token in cookieF
+      const response = await request(app as unknown as App)
+        .get("/auth/self")
+        .send();
+
+      expect(response.status).toBe(401);
+    });
   });
 });

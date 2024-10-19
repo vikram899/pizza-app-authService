@@ -1,14 +1,14 @@
-import { generateKeyPairSync } from "crypto";
+import crypto from "crypto";
 import fs from "fs";
 
-const { publicKey, privateKey } = generateKeyPairSync("rsa", {
+const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
   modulusLength: 2048,
   publicKeyEncoding: {
-    type: "spki",
+    type: "pkcs1",
     format: "pem",
   },
   privateKeyEncoding: {
-    type: "pkcs8",
+    type: "pkcs1",
     format: "pem",
   },
 });
