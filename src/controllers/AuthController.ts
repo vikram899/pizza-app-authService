@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { RegisterUserRequest } from "../types";
+import { AuthRequest, RegisterUserRequest } from "../types";
 import { UserService } from "../services/UserService";
 import { Logger } from "winston";
 import { validationResult } from "express-validator";
@@ -152,6 +152,11 @@ export class AuthController {
       httpOnly: true,
     });
     this.logger.info(`User with user id: ${user.id} has been looged in`);
-    res.status(201).json(user);
+    res.status(200).json(user);
+  }
+
+  async self(req: AuthRequest, res: Response) {
+    const user = await this.userService.findUserById(+req.auth.sub);
+    res.json({ ...user, password: undefined });
   }
 }

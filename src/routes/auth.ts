@@ -1,4 +1,9 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, {
+  Request,
+  Response,
+  NextFunction,
+  RequestHandler,
+} from "express";
 import { AuthController } from "../controllers/AuthController";
 import { UserService } from "../services/UserService";
 import { AppDataSource } from "../config/data-source";
@@ -9,6 +14,8 @@ import { TokenService } from "../services/TokenService";
 import { RefreshToken } from "../entity/RefreshToken";
 import loginValidators from "../validators/login-validators";
 import { CredentialService } from "../services/CredentialService";
+import authenticate from "../middlewares/authenticate";
+import { AuthRequest } from "../types";
 
 const authRouter = express.Router();
 
@@ -36,6 +43,12 @@ authRouter.post(
   loginValidators,
   (req: Request, res: Response, next: NextFunction) =>
     authController.login(req, res, next)
+);
+
+authRouter.get(
+  "/self",
+  authenticate as RequestHandler,
+  (req: Request, res: Response) => authController.self(req as AuthRequest, res)
 );
 
 export default authRouter;

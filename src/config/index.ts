@@ -12,4 +12,5 @@ export const {
   DB_PASSWORD,
   DB_NAME,
   SECRET,
+  JWKS_URI,
 } = process.env;
