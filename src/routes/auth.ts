@@ -51,4 +51,8 @@ authRouter.get(
   (req: Request, res: Response) => authController.self(req as AuthRequest, res)
 );
 
+authRouter.post("/refresh", (req: Request, res: Response) =>
+  authController.refresh(req, res)
+);
+
 export default authRouter;
