@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { AuthRequest, RegisterUserRequest } from "../types";
 import { UserService } from "../services/UserService";
 import { Logger } from "winston";
@@ -160,7 +160,61 @@ export class AuthController {
     res.json({ ...user, password: undefined });
   }
 
-  async refresh(req: Request, res: Response) {
-    res.json({});
+  async refresh(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      //Generate valid access and refresh token
+      const { sub, role, id } = req.auth;
+      const payload: JwtPayload = {
+        sub: sub,
+        role: role,
+      };
+
+      const userResult = await this.userService.findUserById(Number(sub));
+
+      if (!userResult) {
+        const error = createHttpError(400, "User does not exists");
+        next(error);
+        return;
+      }
+      //Generate access token
+      const accessToken = this.tokenService.generateAccessToken(payload);
+
+      //Persisting the ref token in DB
+      const newRefToken = await this.tokenService.persistRefreshToken(
+        userResult
+      );
+
+      this.logger.info(
+        `New access toke ${accessToken} and refreshToken ${newRefToken} generated`
+      );
+
+      //Delete the token from Db
+      await this.tokenService.deleteRefreshToken(Number(id));
+
+      //Generate refresh token
+      const refreshToken = this.tokenService.generateRefreshToken({
+        ...payload,
+        id: String(newRefToken.id),
+      });
+
+      //Setting access and ref token in cookie
+      res.cookie("accessToken", accessToken, {
+        domain: "localhost",
+        sameSite: "strict", //This will be sent to same site host
+        maxAge: 1000 * 60 * 60, //1h
+        httpOnly: true,
+      });
+      res.cookie("refreshToken", refreshToken, {
+        domain: "localhost",
+        sameSite: "strict", //This will be sent to same site host
+        maxAge: 1000 * 60 * 60 * 24 * 365, //1y
+        httpOnly: true,
+      });
+
+      res.status(201).json(userResult);
+    } catch (error) {
+      next(error);
+      return;
+    }
   }
 }
