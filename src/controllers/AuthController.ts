@@ -156,7 +156,7 @@ export class AuthController {
   }
 
   async self(req: AuthRequest, res: Response) {
-    const user = await this.userService.findUserById(+req.auth.sub);
+    const user = await this.userService.findUserById(Number(req.auth.sub));
     res.json({ ...user, password: undefined });
   }
 
@@ -214,6 +214,24 @@ export class AuthController {
       res.status(201).json(userResult);
     } catch (error) {
       next(error);
+      return;
+    }
+  }
+
+  async logout(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { sub, id } = req.auth;
+      await this.tokenService.deleteRefreshToken(Number(id));
+      this.logger.info("Refresh token has been deleted", {
+        id: id,
+      });
+      this.logger.info("User has been logged out", { id: sub });
+
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      res.json({});
+    } catch (err) {
+      next(err);
       return;
     }
   }
