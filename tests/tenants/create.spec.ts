@@ -63,6 +63,7 @@ describe("GET /tenants", () => {
       const tenantRepository = await connection.getRepository(Tenant);
       const tenants = await tenantRepository.find();
 
+      expect(tenants).toHaveLength(1);
       expect(tenants[0].name).toBe(tenantData.name);
       expect(tenants[0].address).toBe(tenantData.address);
     });
@@ -75,7 +76,30 @@ describe("GET /tenants", () => {
       const response = await request(app as unknown as App)
         .post("/tenants")
         .send(tenantData);
+
       expect(response.statusCode).toBe(401);
+    });
+    it("should return 403 if role is not admin", async () => {
+      const managerAccessToken = jwks.token({
+        sub: "1",
+        role: Roles.MANAGER,
+      });
+
+      const tenantData = {
+        name: "Tenant Name",
+        address: "Tenant Address",
+      };
+
+      const response = await request(app as unknown as App)
+        .post("/tenants")
+        .set("Cookie", [`accessToken=${managerAccessToken}`])
+        .send(tenantData);
+
+      expect(response.statusCode).toBe(403);
+      const tenantRepository = await connection.getRepository(Tenant);
+      const tenants = await tenantRepository.find();
+
+      expect(tenants).toHaveLength(0);
     });
   });
 });
