@@ -27,4 +27,30 @@ router.post(
     tenantController.create(req, res, next)
 );
 
+router.get("/", (req: Request, res: Response, next: NextFunction) => {
+  tenantController.fetch(req, res, next);
+});
+
+router.get("/:id", (req: Request, res: Response, next: NextFunction) => {
+  tenantController.fetchById(req, res, next);
+});
+
+router.patch(
+  "/:id",
+  authenticate as RequestHandler,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) => {
+    tenantController.update(req, res, next);
+  }
+);
+
+router.delete(
+  "/:id",
+  authenticate as RequestHandler,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) => {
+    tenantController.delete(req, res, next);
+  }
+);
+
 export default router;

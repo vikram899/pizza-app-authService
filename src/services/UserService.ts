@@ -2,7 +2,7 @@ import { Repository } from "typeorm";
 import { User } from "../entity/User";
 import { UserData } from "../types";
 import createHttpError from "http-errors";
-import { Roles, SALT_ROUNDS } from "../constants";
+import { SALT_ROUNDS } from "../constants";
 import bcrypt from "bcrypt";
 
 export class UserService {
@@ -11,7 +11,7 @@ export class UserService {
     this.userRepository = userRepository;
   }
 
-  async registerUser({ firstName, lastName, email, password }: UserData) {
+  async registerUser({ firstName, lastName, email, password, role }: UserData) {
     const user = await this.userRepository.findOne({ where: { email } });
     if (user) {
       const error = createHttpError(400, "Email already exists");
@@ -25,7 +25,7 @@ export class UserService {
         lastName,
         email,
         password: hashedPassword,
-        role: Roles.CUSTOMER,
+        role,
       });
     } catch (err) {
       const error = createHttpError(500, "Failed to store data in DB");
