@@ -1,11 +1,12 @@
 import request from "supertest";
 import { App } from "supertest/types";
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { AppDataSource } from "../../src/config/data-source";
 import { User } from "../../src/entity/User";
 import app from "../../src/app";
 import { Roles } from "../../src/constants";
 import createJWKSMock from "mock-jwks";
+import { Tenant } from "../../src/entity/Tenant";
 
 describe("POST /users", () => {
   let connection: DataSource;
@@ -32,12 +33,20 @@ describe("POST /users", () => {
 
   describe("Given all fields", () => {
     it("It should persist user in DB", async () => {
+      //Create tenant method
+      const repository: Repository<Tenant> = connection.getRepository(Tenant);
+      const tenant = await repository.save({
+        name: "Test Tenant",
+        address: "Test address",
+      });
+
       const userData = {
         firstName: "John",
         lastName: "Doe",
         email: "jhondoe@gmail.com",
         password: "password",
-        tenantId: 1,
+        tenantId: tenant.id,
+        role: Roles.MANAGER,
       };
       const adminAccessToken = jwks.token({
         sub: "1",
@@ -63,6 +72,7 @@ describe("POST /users", () => {
         email: "jhondoe@gmail.com",
         password: "password",
         tenantId: 1,
+        role: Roles.MANAGER,
       };
       const adminAccessToken = jwks.token({
         sub: "1",

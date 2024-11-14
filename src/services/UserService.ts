@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { User } from "../entity/User";
-import { UserData } from "../types";
+import { LimitedUserData, UserData } from "../types";
 import createHttpError from "http-errors";
 import { SALT_ROUNDS } from "../constants";
 import bcrypt from "bcrypt";
@@ -11,7 +11,14 @@ export class UserService {
     this.userRepository = userRepository;
   }
 
-  async registerUser({ firstName, lastName, email, password, role }: UserData) {
+  async registerUser({
+    firstName,
+    lastName,
+    email,
+    password,
+    tenantId,
+    role,
+  }: UserData) {
     const user = await this.userRepository.findOne({ where: { email } });
     if (user) {
       const error = createHttpError(400, "Email already exists");
@@ -25,6 +32,7 @@ export class UserService {
         lastName,
         email,
         password: hashedPassword,
+        tenantId: tenantId ? { id: tenantId } : undefined,
         role,
       });
     } catch (err) {
@@ -39,6 +47,7 @@ export class UserService {
       where: {
         email,
       },
+      select: ["id", "email", "firstName", "lastName", "password", "role"],
     });
     return user;
   }
@@ -49,6 +58,30 @@ export class UserService {
         id,
       },
     });
+    return user;
+  }
+
+  async findAllUser() {
+    const users = await this.userRepository.find();
+    return users;
+  }
+
+  async findUserbyId(id: number) {
+    const user = await this.userRepository.find({
+      where: {
+        id,
+      },
+    });
+    return user;
+  }
+
+  async update(id: number, UserData: LimitedUserData) {
+    const user = await this.userRepository.update(id, UserData);
+    return user;
+  }
+
+  async delete(id: number) {
+    const user = await this.userRepository.delete(id);
     return user;
   }
 }
