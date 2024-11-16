@@ -41,7 +41,7 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: vikram899/pizza-app-auth-service
+      IMAGE_NAME: vikram823/pizza-app-auth-service
       IMAGE_TAG: build-${{ github.run_number }}
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
