@@ -1,6 +1,6 @@
 import { JwtPayload, sign } from "jsonwebtoken";
 import createHttpError from "http-errors";
-import { PRIVATE_KEY, SECRET } from "../config";
+import { PRIVATE_KEY, REFRESH_TOKEN_SECRET } from "../config";
 import { RefreshToken } from "../entity/RefreshToken";
 import { User } from "../entity/User";
 import { Repository } from "typeorm";
@@ -33,7 +33,7 @@ export class TokenService {
     return accessToken;
   }
   generateRefreshToken(payload: JwtPayload) {
-    const refreshToken = sign(payload, SECRET as string, {
+    const refreshToken = sign(payload, REFRESH_TOKEN_SECRET as string, {
       algorithm: "HS256",
       expiresIn: "1y",
       issuer: "auth-service",

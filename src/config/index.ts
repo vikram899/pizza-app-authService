@@ -13,7 +13,7 @@ export const {
   DB_USERNAME,
   DB_PASSWORD,
   DB_NAME,
-  SECRET,
+  REFRESH_TOKEN_SECRET,
   JWKS_URI,
   PRIVATE_KEY,
 } = process.env;

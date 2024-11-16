@@ -1,13 +1,13 @@
 import { expressjwt } from "express-jwt";
 import { Request } from "express";
-import { SECRET } from "../config";
+import { REFRESH_TOKEN_SECRET } from "../config";
 import { AuthCookie, IRefreshToken } from "../types";
 import { AppDataSource } from "../config/data-source";
 import { RefreshToken } from "../entity/RefreshToken";
 import logger from "../config/logger";
 
 export default expressjwt({
-  secret: SECRET!,
+  secret: REFRESH_TOKEN_SECRET!,
   algorithms: ["HS256"],
   getToken(req: Request) {
     const { refreshToken } = req.cookies as AuthCookie;
