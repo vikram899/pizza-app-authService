@@ -20,7 +20,7 @@ export class TenantService {
     try {
       return await this.tenantRepository.find();
     } catch (err) {
-      const error = createHttpError(500, "Failed to store data in DB");
+      const error = createHttpError(500, "failed to fetch");
       throw error;
       throw err;
     }
@@ -34,7 +34,7 @@ export class TenantService {
         },
       });
     } catch (err) {
-      const error = createHttpError(500, "Failed to store data in DB");
+      const error = createHttpError(500, "failed to fetch");
       throw error;
       throw err;
     }
@@ -44,7 +44,7 @@ export class TenantService {
     try {
       await this.tenantRepository.update(Number(id), tenantData);
     } catch (err) {
-      const error = createHttpError(500, "Failed to store data in DB");
+      const error = createHttpError(500, "Failed to update");
       throw error;
       throw err;
     }
@@ -54,7 +54,7 @@ export class TenantService {
     try {
       await this.tenantRepository.delete(Number(id));
     } catch (err) {
-      const error = createHttpError(500, "Failed to store data in DB");
+      const error = createHttpError(500, "Failed to delete");
       throw error;
       throw err;
     }
