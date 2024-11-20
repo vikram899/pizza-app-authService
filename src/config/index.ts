@@ -16,4 +16,5 @@ export const {
   REFRESH_TOKEN_SECRET,
   JWKS_URI,
   PRIVATE_KEY,
+  ADMIN_DASHBOARD_URL,
 } = process.env;
