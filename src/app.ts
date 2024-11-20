@@ -7,9 +7,17 @@ import authRouter from "./routes/auth";
 import cookieParser from "cookie-parser";
 import tenantRouter from "./routes/tenant";
 import userRouter from "./routes/user";
+import cors from "cors";
+import { ADMIN_DASHBOARD_URL } from "./config";
 
 const app = express();
 
+app.use(
+  cors({
+    origin: [ADMIN_DASHBOARD_URL as string],
+    credentials: true,
+  })
+);
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
